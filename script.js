@@ -419,7 +419,7 @@ function initializeApp() {
 // ===== MAPA =====
 function initializeMap() {
     // Crear mapa centrado en Jalisco
-    map = L.map('map').setView([20.519, -103.36], 12);
+    map = L.map('map').setView([20.519, -103.36], 10);
     
     // Definir capas base
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -4333,17 +4333,6 @@ function loadAndProcessRoutes() {
     
     // Iterar sobre todas las rutas definidas
     Object.keys(RUTAS).forEach(key => {
-        originDestinationMap[key] = RUTAS[key];
-    });
-    
-    // Poblar selectores desde UBICACIONES
-    populateRouteSelectors();
-    
-    console.log('✅ Rutas cargadas desde UBICACIONES y RUTAS:', Object.keys(originDestinationMap).length);
-};
-    
-    // Iterar sobre todas las rutas definidas
-    Object.keys(RUTAS).forEach(key => {
         const [origen, destino] = key.split('|');
         if (!originDestinationMap[key]) {
             originDestinationMap[key] = [];
@@ -4372,42 +4361,13 @@ function loadAndProcessRoutes() {
 
 // ===== FUNCIÓN PARA POBLAR SELECTORES DE ORIGEN Y DESTINO =====
 function populateRouteSelectors() {
-    const originSelect = document.getElementById('originSelect');
-    const destinationSelect = document.getElementById('destinationSelect');
+    const origins = new Set();
+    const destinations = new Set();
     
-    if (!originSelect || !destinationSelect) {
-        console.warn('Selectores no encontrados en el DOM');
-        return;
-    }
-    
-    // Limpiar opciones existentes (excepto la primera)
-    while (originSelect.options.length > 1) {
-        originSelect.remove(1);
-    }
-    while (destinationSelect.options.length > 1) {
-        destinationSelect.remove(1);
-    }
-    
-    // Obtener todas las ubicaciones de UBICACIONES
-    const ubicaciones = Object.values(UBICACIONES);
-    
-    // Agregar opciones ordenadas por nombre
-    ubicaciones.sort((a, b) => a.nombre.localeCompare(b.nombre)).forEach(ubicacion => {
-        // Para origen
-        const optionOrigen = document.createElement('option');
-        optionOrigen.value = ubicacion.nombre;
-        optionOrigen.textContent = ubicacion.nombre;
-        originSelect.appendChild(optionOrigen);
-        
-        // Para destino
-        const optionDestino = document.createElement('option');
-        optionDestino.value = ubicacion.nombre;
-        optionDestino.textContent = ubicacion.nombre;
-        destinationSelect.appendChild(optionDestino);
+    allRoutes.forEach(route => {
+        if (route.properties.origen) origins.add(route.properties.origen);
+        if (route.properties.destino) destinations.add(route.properties.destino);
     });
-    
-    console.log('✅ Selectores poblados con', ubicaciones.length, 'ubicaciones');
-});
     
     const originSelect = document.getElementById('originSelect');
     const destinationSelect = document.getElementById('destinationSelect');
