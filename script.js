@@ -1,7 +1,10 @@
 // ===== DATASET GAMMA COMPLETO =====
 
 // ===== CREDENCIALES DE AUTENTICACIÓN =====
-
+const VALID_CREDENTIALS = {
+    'Usuario 007': 'Swordfish123',
+    'Alejandro': 'Arjona'
+};
 
 // ===== CONFIGURACIÓN DE COLORES POR AÑO =====
 const YEAR_COLORS = {
@@ -353,24 +356,56 @@ let fosasAnualChart;
 
 // ===== INICIALIZACIÓN =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar aplicación directamente
-    initializeApp();
+    initializeAuth();
+    
+    // Cargar datos iniciales desde EXCEL_DATA como respaldo
+    allData = EXCEL_DATA;
+    filteredData = [...allData];
+    
+    console.log('Dataset GAMMA cargado:', allData.length, 'registros');
+    console.log('Total víctimas:', allData.reduce((sum, item) => sum + item.victimas, 0));
 });
 
 // ===== AUTENTICACIÓN =====
-
+function initializeAuth() {
+    const loginForm = document.getElementById('loginForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
     
     if (logoutBtn) {
         logoutBtn.addEventListener('click', handleLogout);
     }
 }
 
- else {
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    if (VALID_CREDENTIALS[username] === password) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('currentUser').textContent = username;
+        
+        // Inicializar aplicación
+        initializeApp();
+        
+        console.log('Login exitoso para:', username);
+    } else {
         alert('Credenciales incorrectas. Solicita ayuda al administrador');
     }
 }
 
-
+function handleLogout() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+}
 
 // ===== INICIALIZACIÓN DE LA APLICACIÓN =====
 function initializeApp() {
